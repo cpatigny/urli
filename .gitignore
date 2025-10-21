@@ -1,5 +1,6 @@
 # ---------- backend ----------
 vendor/
+.env
 
 # ---------- frontend ----------
 # Logs
