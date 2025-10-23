@@ -27,3 +27,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Docker volumes and runtime data
+docker/data
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/

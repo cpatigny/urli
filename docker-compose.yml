@@ -1,0 +1,53 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php_apache
+    volumes:
+      # Mount project files
+      - ./:/var/www/html
+      # Mount Docker-specific configs
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+    ports:
+      - "8000:80"
+      - "8443:443"
+    environment:
+      - APP_ENV=development
+      - DB_HOST=db
+      - DB_NAME=urli_db
+      - DB_USER=urli_user
+      - DB_PASS=urli_password
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: urli_db
+      MYSQL_USER: urli_user
+      MYSQL_PASSWORD: urli_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8081:80"
+    restart: always
+
+volumes:
+  db_data:
