@@ -4,24 +4,41 @@ namespace urli\Service;
 
 use Exception;
 use urli\Model\Url;
+use urli\Model\UrlResult;
 use urli\Repository\UrlRepository;
 
 class UrlService
 {
   public function __construct(private UrlRepository $urlRepository) {}
 
-  public function shortenUrl(string $originalUrl): Url
+  public function shortenUrl(string $originalUrl, ?string $customCode = null): UrlResult
   {
-    // Validate URL
-    if (!filter_var($originalUrl, FILTER_VALIDATE_URL)) {
-      throw new Exception('Invalid URL format');
+    // Check if URL was already shortened
+    $existingUrl = $this->urlRepository->findByOriginalUrl($originalUrl);
+    if ($existingUrl) {
+      return new UrlResult($existingUrl, true);
     }
 
     // Generate short code
     $shortCode = $customCode ?? $this->generateShortCode();
 
+    // Ensure uniqueness if auto-generated
+    if ($customCode === null) {
+      $attempts = 0;
+      while ($this->urlRepository->findByShortCode($shortCode) && $attempts < 10) {
+        $shortCode = $this->generateShortCode();
+        $attempts++;
+      }
+
+      if ($attempts >= 10) {
+        throw new Exception('Failed to generate unique short code');
+      }
+    }
+
     // Save to database
-    return $this->urlRepository->save($originalUrl, $shortCode);
+    $newUrl = $this->urlRepository->save($originalUrl, $shortCode);
+
+    return new UrlResult($newUrl, false);
   }
 
   public function buildShortUrl(string $shortCode): string
@@ -53,6 +70,17 @@ class UrlService
       'clicks' => $url->clicks,
       'existing' => $existing
     ];
+  }
+
+  public function formatUrlResultResponse(UrlResult $result): array
+  {
+    return $this->formatUrlResponse($result->getUrl(), $result->isExisting());
+  }
+
+  public function isExistingUrl(string $shortCode, string $originalUrl): bool
+  {
+    $existingUrl = $this->getUrlByShortCode($shortCode);
+    return $existingUrl && $existingUrl->originalUrl === $originalUrl;
   }
 
   public function getUrlByShortCode(string $shortCode): ?Url

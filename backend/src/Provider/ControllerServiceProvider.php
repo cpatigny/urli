@@ -7,6 +7,7 @@ use urli\Controller\UrlController;
 use urli\Provider\ServiceProvider;
 use urli\Repository\UrlRepository;
 use urli\Service\UrlService;
+use urli\Service\ValidationService;
 
 class ControllerServiceProvider extends ServiceProvider
 {
@@ -14,8 +15,8 @@ class ControllerServiceProvider extends ServiceProvider
   {
     $container->set(UrlController::class, function ($c) {
       return new UrlController(
-        $c->get(UrlRepository::class),
-        $c->get(UrlService::class)
+        $c->get(UrlService::class),
+        $c->get(ValidationService::class)
       );
     });
   }

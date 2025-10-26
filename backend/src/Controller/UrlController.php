@@ -3,82 +3,56 @@
 namespace urli\Controller;
 
 use Exception;
-use urli\Repository\UrlRepository;
+use urli\Http\JsonResponse;
+use urli\Http\Request;
 use urli\Service\UrlService;
+use urli\Service\ValidationService;
 
 class UrlController
 {
-  public function __construct(private UrlRepository $urlRepository, private UrlService $urlService) {}
+  public function __construct(
+    private UrlService $urlService,
+    private ValidationService $validationService
+  ) {}
 
   public function shorten(): void
   {
     try {
-      // Set JSON response headers
-      header('Content-Type: application/json');
+      $request = new Request();
 
-      // Validate request method
-      if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        http_response_code(405);
-        echo json_encode(['error' => 'Method not allowed']);
+      if (!$request->isPost()) {
+        JsonResponse::methodNotAllowed();
         return;
       }
 
-      // Get and decode JSON input
-      $input = file_get_contents('php://input');
-      $data = json_decode($input, true);
+      $requestData = $request->bodyData();
+      $validationError = $this->validationService->validateShortenRequest($requestData);
 
-      // Check for JSON decode errors
-      if (json_last_error() !== JSON_ERROR_NONE) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Invalid JSON']);
+      if ($validationError) {
+        JsonResponse::badRequest($validationError);
         return;
       }
 
-      // Validate required fields
-      if (!isset($data['url']) || empty(trim($data['url']))) {
-        http_response_code(400);
-        echo json_encode(['error' => 'URL is required']);
-        return;
-      }
+      $originalUrl = $request->getUrl();
+      $customCode = $request->getCustomCode();
 
-      $originalUrl = trim($data['url']);
+      $result = $this->urlService->shortenUrl($originalUrl, $customCode);
 
-      // Validate URL format
-      if (!filter_var($originalUrl, FILTER_VALIDATE_URL)) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Invalid URL format']);
-        return;
-      }
-
-      // Check if URL was already shortened
-      $existingUrl = $this->urlRepository->findByOriginalUrl($originalUrl);
-      if ($existingUrl) {
-        http_response_code(200);
-        echo json_encode([
-          'success' => true,
-          'data' => $this->urlService->formatUrlResponse($existingUrl, true)
-        ]);
-        return;
-      }
-
-      // Create shortened URL
-      $shortenedUrl = $this->urlService->shortenUrl($originalUrl);
-
-      // Success response
-      http_response_code(201);
-      echo json_encode([
-        'success' => true,
-        'data' => $this->urlService->formatUrlResponse($shortenedUrl, false)
-      ]);
+      $responseData = $this->urlService->formatUrlResultResponse($result);
+      JsonResponse::created($responseData);
     } catch (Exception $e) {
-      error_log("URL shortening error: " . $e->getMessage());
+      $this->handleError($e);
+    }
+  }
 
-      http_response_code(500);
-      echo json_encode([
-        'error' => $_ENV['APP_ENV'] === 'development'
-          ? $e->getMessage()
-          : 'Internal server error'
-      ]);
+  private function handleError(Exception $e): void
+  {
+    error_log("URL controller error: " . $e->getMessage());
+
+    if (getenv('APP_ENV') === 'development') {
+      JsonResponse::serverError($e->getMessage());
+    } else {
+      JsonResponse::serverError();
     }
   }
 }
