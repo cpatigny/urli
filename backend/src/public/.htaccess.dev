@@ -1,0 +1,32 @@
+RewriteEngine On
+
+# ============================================
+# Security Headers (Relaxed for Development)
+# ============================================
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set X-XSS-Protection "1; mode=block"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+# NO HSTS in development (no HTTPS)
+
+# ============================================
+# CORS - Allow all origins in development
+# ============================================
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+
+# Handle preflight OPTIONS requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=204,L]
+
+# API Routes
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule ^api/(.*)$ index.php [QSA,L]
+
+# Short Code Redirects
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule ^([a-zA-Z0-9-_]+)$ index.php?shortcode=$1 [QSA,L]

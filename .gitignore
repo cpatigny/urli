@@ -1,6 +1,7 @@
 # ---------- backend ----------
 vendor/
 .env
+.htaccess
 
 # ---------- frontend ----------
 # Logs

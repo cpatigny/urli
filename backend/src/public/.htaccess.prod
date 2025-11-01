@@ -1,0 +1,42 @@
+RewriteEngine On
+
+# ============================================
+# Security Headers
+# ============================================
+# Prevent MIME type sniffing
+Header always set X-Content-Type-Options "nosniff"
+
+# Prevent clickjacking (disallow iframe embedding)
+Header always set X-Frame-Options "SAMEORIGIN"
+
+# Enable XSS protection in older browsers
+Header always set X-XSS-Protection "1; mode=block"
+
+# Referrer policy - don't leak URLs to external sites
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+# Only send this site over HTTPS (once you have SSL)
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+# ============================================
+# ============================================
+
+# CORS Configuration - Allow React app subdomain
+Header always set Access-Control-Allow-Origin "https://app.url-i.com"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+Header always set Access-Control-Allow-Credentials "true"
+
+# Handle preflight OPTIONS requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=204,L]
+
+# API Routes
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule ^api/(.*)$ index.php [QSA,L]
+
+# Short Code Redirects
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule ^([a-zA-Z0-9-_]+)$ index.php?shortcode=$1 [QSA,L]
