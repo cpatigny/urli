@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : db
--- Généré le : jeu. 23 oct. 2025 à 06:41
+-- Généré le : sam. 01 nov. 2025 à 13:48
 -- Version du serveur : 8.0.43
 -- Version de PHP : 8.3.26
 
@@ -30,10 +30,17 @@ SET time_zone = "+00:00";
 CREATE TABLE `urls` (
   `id` int NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `original_url` varchar(2000) NOT NULL,
-  `short_code` varchar(100) NOT NULL,
+  `original_url` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `short_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `clicks` int NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `urls`
+--
+
+INSERT INTO `urls` (`id`, `created_at`, `original_url`, `short_code`, `clicks`) VALUES
+(7, '2025-11-01 13:47:54', 'https://google.com', 'tNVBD3', 0);
 
 --
 -- Index pour les tables déchargées
@@ -53,7 +60,7 @@ ALTER TABLE `urls`
 -- AUTO_INCREMENT pour la table `urls`
 --
 ALTER TABLE `urls`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
