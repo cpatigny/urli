@@ -46,4 +46,17 @@ class ValidationService
 
     return null; // No validation errors
   }
+
+  public function validateShortCode(string $shortCode): ?string
+  {
+    if (empty($shortCode)) {
+      return 'Short code is required';
+    }
+
+    if (!preg_match('/^[a-zA-Z0-9_-]{3,20}$/', $shortCode)) {
+      return 'Invalid short code format';
+    }
+
+    return null; // Valid
+  }
 }

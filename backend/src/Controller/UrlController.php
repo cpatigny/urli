@@ -45,6 +45,27 @@ class UrlController
     }
   }
 
+  public function redirect(string $shortCode): void
+  {
+    try {
+      $validationError = $this->validationService->validateShortCode($shortCode);
+      if ($validationError) {
+        JsonResponse::notFound('Invalid short code');
+      }
+
+      $url = $this->urlService->getUrlByShortCode($shortCode);
+      if (!$url) {
+        JsonResponse::notFound('URL not found');
+        return;
+      }
+
+      $this->urlService->incrementClicks($shortCode);
+      JsonResponse::redirect($url->originalUrl);
+    } catch (Exception $e) {
+      $this->handleError($e);
+    }
+  }
+
   private function handleError(Exception $e): void
   {
     error_log("URL controller error: " . $e->getMessage());
