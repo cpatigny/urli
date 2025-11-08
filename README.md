@@ -84,13 +84,10 @@ Content-Type: application/json
 **Response:**
 ```json
 {
-  "success": true,
-  "data": {
-    "message": "User registered successfully",
-    "user": {
-      "id": 1,
-      "email": "user@example.com"
-    }
+  "message": "User registered successfully",
+  "user": {
+    "id": 1,
+    "email": "user@example.com"
   }
 }
 ```
@@ -114,13 +111,10 @@ Content-Type: application/json
 **Response:**
 ```json
 {
-  "success": true,
-  "data": {
-    "message": "Login successful",
-    "user": {
-      "id": 1,
-      "email": "user@example.com"
-    }
+  "message": "Login successful",
+  "user": {
+    "id": 1,
+    "email": "user@example.com"
   }
 }
 ```
@@ -133,10 +127,7 @@ POST /api/auth/logout
 **Response:**
 ```json
 {
-  "success": true,
-  "data": {
-    "message": "Logout successful"
-  }
+  "message": "Logout successful"
 }
 ```
 
@@ -148,12 +139,9 @@ GET /api/auth/me
 **Response:**
 ```json
 {
-  "success": true,
-  "data": {
-    "user": {
-      "id": 1,
-      "email": "user@example.com"
-    }
+  "user": {
+    "id": 1,
+    "email": "user@example.com"
   }
 }
 ```
@@ -174,15 +162,12 @@ Content-Type: application/json
 **Response:**
 ```json
 {
-  "success": true,
-  "data": {
-    "short_code": "abc123",
-    "short_url": "http://localhost:8000/abc123",
-    "original_url": "https://www.example.com",
-    "created_at": "2025-01-20 10:30:45",
-    "clicks": 0,
-    "existing": false
-  }
+  "short_code": "abc123",
+  "short_url": "http://localhost:8000/abc123",
+  "original_url": "https://www.example.com",
+  "created_at": "2025-01-20 10:30:45",
+  "clicks": 0,
+  "existing": false
 }
 ```
 

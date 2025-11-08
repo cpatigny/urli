@@ -16,16 +16,12 @@ class JsonResponse
 
   public static function success(array $data, int $statusCode = self::OK): void
   {
-    self::sendResponse([
-      'success' => true,
-      'data' => $data
-    ], $statusCode);
+    self::sendResponse($data, $statusCode);
   }
 
   public static function error(string $message, int $statusCode = self::BAD_REQUEST): void
   {
     self::sendResponse([
-      'success' => false,
       'error' => $message
     ], $statusCode);
   }

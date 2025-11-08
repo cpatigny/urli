@@ -66,7 +66,6 @@ function handleApiRequest($container, string $method, string $path): void
     default => (function () {
       http_response_code(404);
       echo json_encode([
-        'success' => false,
         'error' => 'API endpoint not found'
       ]);
     })()
