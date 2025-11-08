@@ -4,6 +4,7 @@ namespace urli\Provider;
 
 use urli\Container\Container;
 use urli\Repository\UrlRepository;
+use urli\Repository\UserRepository;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -11,6 +12,10 @@ class RepositoryServiceProvider extends ServiceProvider
   {
     $container->set(UrlRepository::class, function ($c) {
       return new UrlRepository($c->get('db'));
+    });
+
+    $container->set(UserRepository::class, function ($c) {
+      return new UserRepository($c->get('db'));
     });
   }
 }

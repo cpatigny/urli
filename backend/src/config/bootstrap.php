@@ -1,6 +1,7 @@
 <?php
 
 use urli\Container\Container;
+use urli\Provider\AuthManagementProvider;
 use urli\Provider\ControllerServiceProvider;
 use urli\Provider\DatabaseServiceProvider;
 use urli\Provider\RepositoryServiceProvider;
@@ -15,6 +16,7 @@ $providers = [
   new RepositoryServiceProvider(),
   new ControllerServiceProvider(),
   new UrlManagementProvider(),
+  new AuthManagementProvider(),
 ];
 
 foreach ($providers as $provider) {

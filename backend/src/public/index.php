@@ -1,6 +1,7 @@
 <?php
 
 use Dotenv\Dotenv;
+use urli\Controller\AuthController;
 use urli\Controller\UrlController;
 
 require __DIR__ . '/../../vendor/autoload.php';
@@ -34,6 +35,10 @@ try {
     'message' => 'Urli API backend',
     'endpoints' => [
       'POST /api/shorten' => 'Shorten a URL',
+      'POST /api/auth/register' => 'Register a new user',
+      'POST /api/auth/login' => 'Login',
+      'POST /api/auth/logout' => 'Logout',
+      'GET /api/auth/me' => 'Get current user',
     ]
   ]);
 } catch (Exception $e) {
@@ -54,6 +59,17 @@ function handleApiRequest($container, string $method, string $path): void
 
   match ([$method, $apiPath]) {
     ['POST', '/shorten'] => $container->get(UrlController::class)->shorten(),
+    ['POST', '/auth/register'] => $container->get(AuthController::class)->register(),
+    ['POST', '/auth/login'] => $container->get(AuthController::class)->login(),
+    ['POST', '/auth/logout'] => $container->get(AuthController::class)->logout(),
+    ['GET', '/auth/me'] => $container->get(AuthController::class)->me(),
+    default => (function () {
+      http_response_code(404);
+      echo json_encode([
+        'success' => false,
+        'error' => 'API endpoint not found'
+      ]);
+    })()
   };
 }
 

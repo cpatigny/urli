@@ -68,7 +68,99 @@ npm run dev
 
 ## 📚 API Documentation
 
-### Shorten URL
+### Authentication
+
+#### Register
+```bash
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "yourpassword"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "User registered successfully",
+    "user": {
+      "id": 1,
+      "email": "user@example.com"
+    }
+  }
+}
+```
+
+**Validation:**
+- Email must be valid format
+- Password must be at least 6 characters
+- Email must be unique
+
+#### Login
+```bash
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "yourpassword"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Login successful",
+    "user": {
+      "id": 1,
+      "email": "user@example.com"
+    }
+  }
+}
+```
+
+#### Logout
+```bash
+POST /api/auth/logout
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Logout successful"
+  }
+}
+```
+
+#### Get Current User
+```bash
+GET /api/auth/me
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": 1,
+      "email": "user@example.com"
+    }
+  }
+}
+```
+
+### URL Shortening
+
+#### Shorten URL
 ```bash
 POST /api/shorten
 Content-Type: application/json
@@ -94,30 +186,11 @@ Content-Type: application/json
 }
 ```
 
-### Redirect to Original URL
+#### Redirect to Original URL
 ```bash
 GET /{shortCode}
 ```
 Returns a `302 redirect` to the original URL.
-
-### Get URL Statistics
-```bash
-GET /api/stats/{shortCode}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "short_code": "abc123",
-    "short_url": "http://localhost:8000/abc123",
-    "original_url": "https://www.example.com",
-    "clicks": 15,
-    "created_at": "2025-01-20 10:30:45"
-  }
-}
-```
 
 ## 🔧 Configuration
 
@@ -136,12 +209,6 @@ DB_HOST=db
 DB_NAME=urli_db
 DB_USER=urli_user
 DB_PASS=urli_password
-
-# Database (Production - update with your credentials)
-# DB_HOST=your_host
-# DB_NAME=your_database
-# DB_USER=your_username
-# DB_PASS=your_password
 ```
 
 ### Database Setup
