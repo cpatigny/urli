@@ -21,17 +21,17 @@ class AuthService
   {
     // Validate email format
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      throw new ValidationException('Invalid email format');
+      throw new ValidationException('Invalid email format', 'INVALID_EMAIL');
     }
 
     // Validate password length
     if (strlen($password) < 6) {
-      throw new ValidationException('Password must be at least 6 characters');
+      throw new ValidationException('Password must be at least 6 characters', 'INVALID_PASSWORD');
     }
 
     // Check if email already exists
     if ($this->userRepository->findByEmail($email)) {
-      throw new ValidationException('Email already exists');
+      throw new ValidationException('Email already exists', 'EMAIL_EXISTS');
     }
 
     // Hash password
@@ -52,12 +52,12 @@ class AuthService
     $user = $this->userRepository->findByEmail($email);
 
     if (!$user) {
-      throw new ValidationException('Invalid email or password');
+      throw new ValidationException('Invalid email or password', 'INVALID_CREDENTIALS');
     }
 
     // Verify password
     if (!$user->verifyPassword($password)) {
-      throw new ValidationException('Invalid email or password');
+      throw new ValidationException('Invalid email or password', 'INVALID_CREDENTIALS');
     }
 
     // Set session

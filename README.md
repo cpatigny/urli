@@ -97,6 +97,22 @@ Content-Type: application/json
 - Password must be at least 6 characters
 - Email must be unique
 
+**Error Response:**
+```json
+{
+  "error": {
+    "code": "INVALID_EMAIL",
+    "message": "Invalid email format"
+  }
+}
+```
+
+**Error Codes:**
+- `MISSING_FIELDS` - Email or password not provided
+- `INVALID_EMAIL` - Email format is invalid
+- `INVALID_PASSWORD` - Password is too short (minimum 6 characters)
+- `EMAIL_EXISTS` - Email is already registered
+
 #### Login
 ```bash
 POST /api/auth/login
@@ -118,6 +134,20 @@ Content-Type: application/json
   }
 }
 ```
+
+**Error Response:**
+```json
+{
+  "error": {
+    "code": "INVALID_CREDENTIALS",
+    "message": "Invalid email or password"
+  }
+}
+```
+
+**Error Codes:**
+- `MISSING_FIELDS` - Email or password not provided
+- `INVALID_CREDENTIALS` - Email or password is incorrect
 
 #### Logout
 ```bash

@@ -28,7 +28,7 @@ class AuthController
 
       // Validate required fields
       if (empty($data['email']) || empty($data['password'])) {
-        JsonResponse::badRequest('Email and password are required');
+        JsonResponse::badRequest('Email and password are required', 'MISSING_FIELDS');
         return;
       }
 
@@ -42,7 +42,7 @@ class AuthController
         ]
       ]);
     } catch (ValidationException $e) {
-      JsonResponse::badRequest($e->getMessage());
+      JsonResponse::badRequest($e->getMessage(), $e->getErrorCode());
     } catch (Exception $e) {
       $this->handleError($e);
     }
@@ -62,7 +62,7 @@ class AuthController
 
       // Validate required fields
       if (empty($data['email']) || empty($data['password'])) {
-        JsonResponse::badRequest('Email and password are required');
+        JsonResponse::badRequest('Email and password are required', 'MISSING_FIELDS');
         return;
       }
 
@@ -76,7 +76,7 @@ class AuthController
         ]
       ]);
     } catch (ValidationException $e) {
-      JsonResponse::badRequest($e->getMessage());
+      JsonResponse::badRequest($e->getMessage(), $e->getErrorCode());
     } catch (Exception $e) {
       $this->handleError($e);
     }
