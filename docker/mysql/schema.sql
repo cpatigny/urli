@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : db
--- Généré le : sam. 08 nov. 2025 à 12:48
+-- Généré le : dim. 09 nov. 2025 à 11:35
 -- Version du serveur : 8.0.43
 -- Version de PHP : 8.3.26
 
@@ -32,6 +32,7 @@ CREATE TABLE `urls` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `original_url` varchar(2000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `short_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` int DEFAULT NULL,
   `clicks` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -57,7 +58,9 @@ CREATE TABLE `users` (
 -- Index pour la table `urls`
 --
 ALTER TABLE `urls`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_short_code` (`short_code`),
+  ADD KEY `idx_user_id` (`user_id`);
 
 --
 -- Index pour la table `users`
@@ -75,13 +78,23 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT pour la table `urls`
 --
 ALTER TABLE `urls`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `urls`
+--
+ALTER TABLE `urls`
+  ADD CONSTRAINT `fk_urls_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

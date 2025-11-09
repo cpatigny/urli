@@ -10,6 +10,7 @@ class Url
     public readonly int $id,
     public readonly string $originalUrl,
     public readonly string $shortCode,
+    public readonly ?int $userId,
     public readonly int $clicks,
     public readonly DateTime $createdAt
   ) {}
@@ -20,6 +21,7 @@ class Url
       'id' => $this->id,
       'original_url' => $this->originalUrl,
       'short_code' => $this->shortCode,
+      'user_id' => $this->userId,
       'clicks' => $this->clicks,
       'created_at' => $this->createdAt->format('Y-m-d H:i:s')
     ];

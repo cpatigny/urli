@@ -18,7 +18,8 @@ class ControllerServiceProvider extends ServiceProvider
     $container->set(UrlController::class, function ($c) {
       return new UrlController(
         $c->get(UrlService::class),
-        $c->get(ValidationService::class)
+        $c->get(ValidationService::class),
+        $c->get(AuthService::class)
       );
     });
 

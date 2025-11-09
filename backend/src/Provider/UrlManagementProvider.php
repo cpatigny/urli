@@ -13,7 +13,7 @@ class UrlManagementProvider extends ServiceProvider
   public function register(Container $container): void
   {
     $container->set(ValidationService::class, function ($c) {
-      return new ValidationService($c->get(UrlRepository::class));
+      return new ValidationService();
     });
 
     $container->set(UrlService::class, function ($c) {

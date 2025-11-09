@@ -2,11 +2,8 @@
 
 namespace urli\Service;
 
-use urli\Repository\UrlRepository;
-
 class ValidationService
 {
-  public function __construct(private UrlRepository $urlRepository) {}
 
   // Returns a message if there is an error or returns null otherwise
   public function validateShortenRequest(array $data): ?string
@@ -27,7 +24,7 @@ class ValidationService
       return 'Invalid URL format';
     }
 
-    // Validate custom code if provided
+    // Validate custom code format if provided
     if (!empty($data['custom_code'])) {
       $customCode = trim($data['custom_code']);
 
@@ -37,10 +34,6 @@ class ValidationService
 
       if (!preg_match('/^[a-zA-Z0-9_-]+$/', $customCode)) {
         return 'Custom code can only contain letters, numbers, hyphens, and underscores';
-      }
-
-      if ($this->urlRepository->findByShortCode($customCode)) {
-        return 'Custom code already exists';
       }
     }
 

@@ -11,12 +11,14 @@ class UrlService
 {
   public function __construct(private UrlRepository $urlRepository) {}
 
-  public function shortenUrl(string $originalUrl, ?string $customCode = null): UrlResult
+  public function shortenUrl(string $originalUrl, ?string $customCode = null, ?int $userId = null): UrlResult
   {
-    // Check if URL was already shortened
-    $existingUrl = $this->urlRepository->findByOriginalUrl($originalUrl);
-    if ($existingUrl) {
-      return new UrlResult($existingUrl, true);
+    // If no custom code provided, check if URL was already shortened
+    if ($customCode === null) {
+      $existingUrl = $this->urlRepository->findByOriginalUrl($originalUrl);
+      if ($existingUrl) {
+        return new UrlResult($existingUrl, true);
+      }
     }
 
     // Generate short code
@@ -36,7 +38,7 @@ class UrlService
     }
 
     // Save to database
-    $newUrl = $this->urlRepository->save($originalUrl, $shortCode);
+    $newUrl = $this->urlRepository->save($originalUrl, $shortCode, $userId);
 
     return new UrlResult($newUrl, false);
   }

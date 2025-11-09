@@ -5,20 +5,21 @@ namespace urli\Repository;
 use DateTime;
 use Exception;
 use PDO;
+use urli\Exception\ValidationException;
 use urli\Model\Url;
 
 class UrlRepository extends BaseRepository
 {
   public function __construct(protected PDO $db) {}
 
-  public function save(string $originalUrl, string $shortCode): Url
+  public function save(string $originalUrl, string $shortCode, ?int $userId = null): Url
   {
     try {
       $stmt = $this->db->prepare(
-        "INSERT INTO urls (original_url, short_code, created_at) VALUES (?, ?, NOW())"
+        "INSERT INTO urls (original_url, short_code, user_id, created_at) VALUES (?, ?, ?, NOW())"
       );
 
-      $success = $stmt->execute([$originalUrl, $shortCode]);
+      $success = $stmt->execute([$originalUrl, $shortCode, $userId]);
 
       if (!$success) {
         throw new Exception('Failed to save URL');
@@ -28,7 +29,7 @@ class UrlRepository extends BaseRepository
       return $this->findById($id);
     } catch (\PDOException $e) {
       if ($e->getCode() == 23000) { // Duplicate entry
-        throw new Exception('Short code already exists');
+        throw new ValidationException('Short code already exists', 'SHORT_CODE_EXISTS');
       }
       throw new Exception('Database error: ' . $e->getMessage());
     }
@@ -76,6 +77,7 @@ class UrlRepository extends BaseRepository
       id: (int) $data['id'],
       originalUrl: $data['original_url'],
       shortCode: $data['short_code'],
+      userId: isset($data['user_id']) ? (int) $data['user_id'] : null,
       clicks: (int) $data['clicks'],
       createdAt: new DateTime($data['created_at'])
     );

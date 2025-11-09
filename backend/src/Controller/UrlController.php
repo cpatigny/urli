@@ -3,8 +3,10 @@
 namespace urli\Controller;
 
 use Exception;
+use urli\Exception\ValidationException;
 use urli\Http\JsonResponse;
 use urli\Http\Request;
+use urli\Service\AuthService;
 use urli\Service\UrlService;
 use urli\Service\ValidationService;
 
@@ -12,7 +14,8 @@ class UrlController
 {
   public function __construct(
     private UrlService $urlService,
-    private ValidationService $validationService
+    private ValidationService $validationService,
+    private AuthService $authService
   ) {}
 
   public function shorten(): void
@@ -29,17 +32,30 @@ class UrlController
       $validationError = $this->validationService->validateShortenRequest($requestData);
 
       if ($validationError) {
-        JsonResponse::badRequest($validationError);
+        JsonResponse::badRequest($validationError, 'VALIDATION_ERROR');
         return;
       }
 
       $originalUrl = $request->getUrl();
       $customCode = $request->getCustomCode();
 
-      $result = $this->urlService->shortenUrl($originalUrl, $customCode);
+      if ($customCode !== null && !$this->authService->isAuthenticated()) {
+        JsonResponse::unauthorized('You must be logged in to use custom short codes', 'AUTHENTICATION_REQUIRED');
+        return;
+      }
+
+      $userId = null;
+      if ($this->authService->isAuthenticated()) {
+        $currentUser = $this->authService->getCurrentUser();
+        $userId = $currentUser ? $currentUser->id : null;
+      }
+
+      $result = $this->urlService->shortenUrl($originalUrl, $customCode, $userId);
 
       $responseData = $this->urlService->formatUrlResultResponse($result);
       JsonResponse::created($responseData);
+    } catch (ValidationException $e) {
+      JsonResponse::badRequest($e->getMessage(), $e->getErrorCode());
     } catch (Exception $e) {
       $this->handleError($e);
     }

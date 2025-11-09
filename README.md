@@ -5,8 +5,10 @@ A modern URL shortener built with PHP backend and React frontend, featuring a cl
 ## 🚀 Features
 
 - **URL Shortening**: Transform long URLs into short, memorable links
-- **Custom Short Codes**: Create personalized short codes
+- **Custom Short Codes**: Create personalized short codes (authenticated users only)
 - **Click Analytics**: Track clicks and view statistics
+- **User Authentication**: Register, login, and logout functionality
+- **Session Management**: Secure session-based authentication
 - **Docker Support**: Easy local development setup
 
 ## 🏗️ Architecture
@@ -185,7 +187,7 @@ Content-Type: application/json
 
 {
   "url": "https://www.example.com",
-  "custom_code": "example"  // optional
+  "custom_code": "example"  // optional (requires authentication)
 }
 ```
 
@@ -198,6 +200,32 @@ Content-Type: application/json
   "created_at": "2025-01-20 10:30:45",
   "clicks": 0,
   "existing": false
+}
+```
+
+**Notes:**
+- Anonymous users can shorten URLs but will receive a random short code
+- Only authenticated users can provide a custom short code
+
+**Error Responses:**
+
+When custom code is provided without authentication:
+```json
+{
+  "error": {
+    "code": "AUTHENTICATION_REQUIRED",
+    "message": "You must be logged in to use custom short codes"
+  }
+}
+```
+
+When custom code already exists:
+```json
+{
+  "error": {
+    "code": "SHORT_CODE_EXISTS",
+    "message": "Short code already exists"
+  }
 }
 ```
 
