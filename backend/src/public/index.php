@@ -39,6 +39,7 @@ try {
       'POST /api/auth/login' => 'Login',
       'POST /api/auth/logout' => 'Logout',
       'GET /api/auth/me' => 'Get current user',
+      'DELETE /api/auth/me' => 'Delete account',
     ]
   ]);
 } catch (Exception $e) {
@@ -63,6 +64,7 @@ function handleApiRequest($container, string $method, string $path): void
     ['POST', '/auth/login'] => $container->get(AuthController::class)->login(),
     ['POST', '/auth/logout'] => $container->get(AuthController::class)->logout(),
     ['GET', '/auth/me'] => $container->get(AuthController::class)->me(),
+    ['DELETE', '/auth/me'] => $container->get(AuthController::class)->deleteMyAccount(),
     default => (function () {
       http_response_code(404);
       echo json_encode([

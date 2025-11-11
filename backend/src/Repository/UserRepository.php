@@ -53,6 +53,14 @@ class UserRepository extends BaseRepository
     return $data ? $this->hydrate($data) : null;
   }
 
+  public function delete(int $id): bool
+  {
+    $stmt = $this->db->prepare("DELETE FROM users WHERE id = ?");
+    $success = $stmt->execute([$id]);
+
+    return $success && $stmt->rowCount() > 0;
+  }
+
   private function hydrate(array $data): User
   {
     return new User(

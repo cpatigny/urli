@@ -123,6 +123,33 @@ class AuthController
     }
   }
 
+  public function deleteMyAccount(): void
+  {
+    try {
+      $request = new Request();
+
+      if (!$request->isDelete()) {
+        JsonResponse::methodNotAllowed();
+        return;
+      }
+
+      $user = $this->authService->getCurrentUser();
+
+      if (!$user) {
+        JsonResponse::unauthorized('Not authenticated');
+        return;
+      }
+
+      $this->authService->deleteAccount($user->id);
+
+      JsonResponse::success([
+        'message' => 'Account deleted'
+      ]);
+    } catch (Exception $e) {
+      $this->handleError($e);
+    }
+  }
+
   private function handleError(Exception $e): void
   {
     error_log("Auth controller error: " . $e->getMessage());

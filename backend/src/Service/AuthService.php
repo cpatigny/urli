@@ -80,6 +80,18 @@ class AuthService
     session_destroy();
   }
 
+  public function deleteAccount(int $id): void
+  {
+    // Logout first to clean up session before deleting the user
+    $this->logout();
+
+    $deleted = $this->userRepository->delete($id);
+
+    if (!$deleted) {
+      throw new Exception('Failed to delete account');
+    }
+  }
+
   public function getCurrentUser(): ?User
   {
     if (!isset($_SESSION['user_id'])) {

@@ -178,6 +178,34 @@ GET /api/auth/me
 }
 ```
 
+#### Delete Account
+```bash
+DELETE /api/auth/me
+```
+
+**Response:**
+```json
+{
+  "message": "Account deleted"
+}
+```
+
+**Notes:**
+- Requires authentication
+- Permanently deletes the user account
+- Automatically logs out the user after deletion
+- All URLs created by the user will have their `user_id` set to NULL (due to foreign key constraint ON DELETE SET NULL)
+
+**Error Response:**
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Not authenticated"
+  }
+}
+```
+
 ### URL Shortening
 
 #### Shorten URL
