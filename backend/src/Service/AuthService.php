@@ -24,10 +24,8 @@ class AuthService
       throw new ValidationException('Invalid email format', 'INVALID_EMAIL');
     }
 
-    // Validate password length
-    if (strlen($password) < 6) {
-      throw new ValidationException('Password must be at least 6 characters', 'INVALID_PASSWORD');
-    }
+    // Validate password
+    $this->validatePassword($password);
 
     // Check if email already exists
     if ($this->userRepository->findByEmail($email)) {
@@ -114,6 +112,37 @@ class AuthService
     return $user;
   }
 
+  public function updatePassword(string $currentPassword, string $newPassword): User
+  {
+    // Check if user is authenticated
+    if (!$this->isAuthenticated()) {
+      throw new ValidationException('Not authenticated', 'UNAUTHORIZED');
+    }
+
+    $currentUser = $this->getCurrentUser();
+
+    // Verify current password
+    if (!$currentUser->verifyPassword($currentPassword)) {
+      throw new ValidationException('Current password is incorrect', 'INVALID_CURRENT_PASSWORD');
+    }
+
+    // Validate new password
+    $this->validatePassword($newPassword);
+
+    // Check if new password is the same as current password
+    if ($currentUser->verifyPassword($newPassword)) {
+      throw new ValidationException('New password must be different from current password', 'PASSWORD_UNCHANGED');
+    }
+
+    // Hash new password
+    $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+
+    // Update password
+    $user = $this->userRepository->updatePassword($currentUser->id, $passwordHash);
+
+    return $user;
+  }
+
   public function deleteAccount(int $id): void
   {
     // Logout first to clean up session before deleting the user
@@ -123,6 +152,13 @@ class AuthService
 
     if (!$deleted) {
       throw new Exception('Failed to delete account');
+    }
+  }
+
+  private function validatePassword(string $password): void
+  {
+    if (strlen($password) < 6) {
+      throw new ValidationException('Password must be at least 6 characters', 'INVALID_PASSWORD');
     }
   }
 

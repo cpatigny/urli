@@ -75,6 +75,21 @@ class UserRepository extends BaseRepository
     }
   }
 
+  public function updatePassword(int $id, string $passwordHash): User
+  {
+    $stmt = $this->db->prepare(
+      "UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ?"
+    );
+
+    $success = $stmt->execute([$passwordHash, $id]);
+
+    if (!$success || $stmt->rowCount() === 0) {
+      throw new Exception('Failed to update password');
+    }
+
+    return $this->findById($id);
+  }
+
   public function delete(int $id): bool
   {
     $stmt = $this->db->prepare("DELETE FROM users WHERE id = ?");

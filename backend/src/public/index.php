@@ -40,6 +40,7 @@ try {
       'POST /api/auth/logout' => 'Logout',
       'GET /api/auth/me' => 'Get current user',
       'PATCH /api/auth/email' => 'Update email',
+      'PATCH /api/auth/password' => 'Update password',
       'DELETE /api/auth/me' => 'Delete account',
     ]
   ]);
@@ -66,6 +67,7 @@ function handleApiRequest($container, string $method, string $path): void
     ['POST', '/auth/logout'] => $container->get(AuthController::class)->logout(),
     ['GET', '/auth/me'] => $container->get(AuthController::class)->me(),
     ['PATCH', '/auth/email'] => $container->get(AuthController::class)->updateEmail(),
+    ['PATCH', '/auth/password'] => $container->get(AuthController::class)->updatePassword(),
     ['DELETE', '/auth/me'] => $container->get(AuthController::class)->deleteMyAccount(),
     default => (function () {
       http_response_code(404);

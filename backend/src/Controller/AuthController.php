@@ -163,6 +163,40 @@ class AuthController
     }
   }
 
+  public function updatePassword(): void
+  {
+    try {
+      $request = new Request();
+
+      if (!$request->isPatch()) {
+        JsonResponse::methodNotAllowed();
+        return;
+      }
+
+      $data = $request->bodyData();
+
+      // Validate required fields
+      if (empty($data['current_password']) || empty($data['new_password'])) {
+        JsonResponse::badRequest('Current password and new password are required', 'MISSING_FIELDS');
+        return;
+      }
+
+      $user = $this->authService->updatePassword($data['current_password'], $data['new_password']);
+
+      JsonResponse::success([
+        'message' => 'Password updated successfully',
+        'user' => [
+          'id' => $user->id,
+          'email' => $user->email
+        ]
+      ]);
+    } catch (ValidationException $e) {
+      JsonResponse::badRequest($e->getMessage(), $e->getErrorCode());
+    } catch (Exception $e) {
+      $this->handleError($e);
+    }
+  }
+
   public function deleteMyAccount(): void
   {
     try {

@@ -270,6 +270,86 @@ Email already taken:
 }
 ```
 
+#### Update Password
+```bash
+PATCH /api/auth/password
+Content-Type: application/json
+
+{
+  "current_password": "oldpassword",
+  "new_password": "newpassword"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Password updated successfully",
+  "user": {
+    "id": 1,
+    "email": "user@example.com"
+  }
+}
+```
+
+**Notes:**
+- Requires authentication
+- Must provide correct current password
+- New password must be at least 6 characters
+- New password must be different from current password
+
+**Error Responses:**
+
+Missing fields:
+```json
+{
+  "error": {
+    "code": "MISSING_FIELDS",
+    "message": "Current password and new password are required"
+  }
+}
+```
+
+Not authenticated:
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Not authenticated"
+  }
+}
+```
+
+Incorrect current password:
+```json
+{
+  "error": {
+    "code": "INVALID_CURRENT_PASSWORD",
+    "message": "Current password is incorrect"
+  }
+}
+```
+
+Invalid new password:
+```json
+{
+  "error": {
+    "code": "INVALID_PASSWORD",
+    "message": "New password must be at least 6 characters"
+  }
+}
+```
+
+Password unchanged:
+```json
+{
+  "error": {
+    "code": "PASSWORD_UNCHANGED",
+    "message": "New password must be different from current password"
+  }
+}
+```
+
 #### Delete Account
 ```bash
 DELETE /api/auth/me
