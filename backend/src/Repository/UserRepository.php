@@ -53,6 +53,28 @@ class UserRepository extends BaseRepository
     return $data ? $this->hydrate($data) : null;
   }
 
+  public function updateEmail(int $id, string $email): User
+  {
+    try {
+      $stmt = $this->db->prepare(
+        "UPDATE users SET email = ?, updated_at = NOW() WHERE id = ?"
+      );
+
+      $success = $stmt->execute([$email, $id]);
+
+      if (!$success || $stmt->rowCount() === 0) {
+        throw new Exception('Failed to update email');
+      }
+
+      return $this->findById($id);
+    } catch (\PDOException $e) {
+      if ($e->getCode() == 23000) {
+        throw new Exception('Email already exists');
+      }
+      throw new Exception('Database error: ' . $e->getMessage());
+    }
+  }
+
   public function delete(int $id): bool
   {
     $stmt = $this->db->prepare("DELETE FROM users WHERE id = ?");

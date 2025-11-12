@@ -123,6 +123,40 @@ class AuthController
     }
   }
 
+  public function updateEmail(): void
+  {
+    try {
+      $request = new Request();
+
+      if (!$request->isPatch()) {
+        JsonResponse::methodNotAllowed();
+        return;
+      }
+
+      $data = $request->bodyData();
+
+      // Validate required fields
+      if (empty($data['email'])) {
+        JsonResponse::badRequest('Email is required', 'MISSING_FIELDS');
+        return;
+      }
+
+      $user = $this->authService->updateEmail($data['email']);
+
+      JsonResponse::success([
+        'message' => 'Email updated successfully',
+        'user' => [
+          'id' => $user->id,
+          'email' => $user->email
+        ]
+      ]);
+    } catch (ValidationException $e) {
+      JsonResponse::badRequest($e->getMessage(), $e->getErrorCode());
+    } catch (Exception $e) {
+      $this->handleError($e);
+    }
+  }
+
   public function deleteMyAccount(): void
   {
     try {

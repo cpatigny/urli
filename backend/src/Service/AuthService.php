@@ -80,6 +80,40 @@ class AuthService
     session_destroy();
   }
 
+  public function updateEmail(string $newEmail): User
+  {
+    // Check if user is authenticated
+    if (!$this->isAuthenticated()) {
+      throw new ValidationException('Not authenticated', 'UNAUTHORIZED');
+    }
+
+    // Validate email format
+    if (!filter_var($newEmail, FILTER_VALIDATE_EMAIL)) {
+      throw new ValidationException('Invalid email format', 'INVALID_EMAIL');
+    }
+
+    $currentUser = $this->getCurrentUser();
+
+    // Check if new email is the same as current email
+    if ($currentUser->email === $newEmail) {
+      throw new ValidationException('Email is the same as current email', 'EMAIL_UNCHANGED');
+    }
+
+    // Check if email already exists and belongs to another user
+    $existingUser = $this->userRepository->findByEmail($newEmail);
+    if ($existingUser) {
+      throw new ValidationException('Email already taken by another user', 'EMAIL_TAKEN');
+    }
+
+    // Update email
+    $user = $this->userRepository->updateEmail($currentUser->id, $newEmail);
+
+    // Update session with new email
+    $_SESSION['user_email'] = $newEmail;
+
+    return $user;
+  }
+
   public function deleteAccount(int $id): void
   {
     // Logout first to clean up session before deleting the user

@@ -178,6 +178,85 @@ GET /api/auth/me
 }
 ```
 
+#### Update Email
+```bash
+PATCH /api/auth/email
+Content-Type: application/json
+
+{
+  "email": "newemail@example.com"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Email updated successfully",
+  "user": {
+    "id": 1,
+    "email": "newemail@example.com"
+  }
+}
+```
+
+**Notes:**
+- Requires authentication
+- Email must be valid format
+- Email must not already be taken by another user
+- Session is automatically updated with new email
+
+**Error Responses:**
+
+Missing email field:
+```json
+{
+  "error": {
+    "code": "MISSING_FIELDS",
+    "message": "Email is required"
+  }
+}
+```
+
+Not authenticated:
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Not authenticated"
+  }
+}
+```
+
+Invalid email format:
+```json
+{
+  "error": {
+    "code": "INVALID_EMAIL",
+    "message": "Invalid email format"
+  }
+}
+```
+
+Email unchanged:
+```json
+{
+  "error": {
+    "code": "EMAIL_UNCHANGED",
+    "message": "Email is the same as current email"
+  }
+}
+```
+
+Email already taken:
+```json
+{
+  "error": {
+    "code": "EMAIL_TAKEN",
+    "message": "Email already taken by another user"
+  }
+}
+```
+
 #### Delete Account
 ```bash
 DELETE /api/auth/me

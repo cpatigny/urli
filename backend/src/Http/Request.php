@@ -102,6 +102,11 @@ class Request
     return $this->method === 'DELETE';
   }
 
+  public function isPatch(): bool
+  {
+    return $this->method === 'PATCH';
+  }
+
   public function getCustomCode(): ?string
   {
     $customCode = $this->getFromBody('custom_code');
