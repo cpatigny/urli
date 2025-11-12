@@ -87,6 +87,19 @@ class UrlRepository extends BaseRepository
     return $success && $stmt->rowCount() > 0;
   }
 
+  public function findByUserId(int $userId): array
+  {
+    $stmt = $this->db->prepare("SELECT * FROM urls WHERE user_id = ? ORDER BY created_at DESC");
+    $stmt->execute([$userId]);
+
+    $urls = [];
+    while ($data = $stmt->fetch()) {
+      $urls[] = $this->hydrate($data);
+    }
+
+    return $urls;
+  }
+
   private function hydrate(array $data): Url
   {
     return new Url(

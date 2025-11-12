@@ -82,6 +82,30 @@ class UrlController
     }
   }
 
+  public function getUserUrls(): void
+  {
+    try {
+      $request = new Request();
+
+      if (!$request->isGet()) {
+        JsonResponse::methodNotAllowed();
+        return;
+      }
+
+      if (!$this->authService->isAuthenticated()) {
+        JsonResponse::unauthorized('Authentication required', 'UNAUTHORIZED');
+        return;
+      }
+
+      $currentUser = $this->authService->getCurrentUser();
+      $urls = $this->urlService->getUserUrls($currentUser->id);
+
+      JsonResponse::success(['urls' => $urls]);
+    } catch (Exception $e) {
+      $this->handleError($e);
+    }
+  }
+
   public function deleteUrl(string $shortCode): void
   {
     try {

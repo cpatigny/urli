@@ -35,6 +35,7 @@ try {
     'message' => 'Urli API backend',
     'endpoints' => [
       'POST /api/shorten' => 'Shorten a URL',
+      'GET /api/urls' => 'Get all user URLs',
       'DELETE /api/urls/{shortCode}' => 'Delete a URL',
       'POST /api/auth/register' => 'Register a new user',
       'POST /api/auth/login' => 'Login',
@@ -69,6 +70,7 @@ function handleApiRequest($container, string $method, string $path): void
 
   match ([$method, $apiPath]) {
     ['POST', '/shorten'] => $container->get(UrlController::class)->shorten(),
+    ['GET', '/urls'] => $container->get(UrlController::class)->getUserUrls(),
     ['POST', '/auth/register'] => $container->get(AuthController::class)->register(),
     ['POST', '/auth/login'] => $container->get(AuthController::class)->login(),
     ['POST', '/auth/logout'] => $container->get(AuthController::class)->logout(),

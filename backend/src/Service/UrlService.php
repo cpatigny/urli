@@ -113,4 +113,19 @@ class UrlService
     // Delete URL
     return $this->urlRepository->deleteByShortCodeAndUserId($shortCode, $userId);
   }
+
+  public function getUserUrls(int $userId): array
+  {
+    $urls = $this->urlRepository->findByUserId($userId);
+
+    return array_map(function (Url $url) {
+      return [
+        'short_code' => $url->shortCode,
+        'short_url' => $this->buildShortUrl($url->shortCode),
+        'original_url' => $url->originalUrl,
+        'created_at' => $url->createdAt->format('Y-m-d H:i:s'),
+        'clicks' => $url->clicks
+      ];
+    }, $urls);
+  }
 }

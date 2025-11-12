@@ -433,6 +433,51 @@ When custom code already exists:
 }
 ```
 
+#### Get User URLs
+```bash
+GET /api/urls
+```
+
+**Response:**
+```json
+{
+  "urls": [
+    {
+      "short_code": "abc123",
+      "short_url": "http://localhost:8000/abc123",
+      "original_url": "https://www.example.com",
+      "created_at": "2025-01-20 10:30:45",
+      "clicks": 42
+    },
+    {
+      "short_code": "custom",
+      "short_url": "http://localhost:8000/custom",
+      "original_url": "https://www.google.com",
+      "created_at": "2025-01-19 15:22:10",
+      "clicks": 15
+    }
+  ]
+}
+```
+
+**Notes:**
+- Requires authentication
+- Returns all URLs created by the authenticated user
+- URLs are ordered by creation date (most recent first)
+- Returns empty array if user has no URLs
+
+**Error Response:**
+
+Not authenticated:
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Authentication required"
+  }
+}
+```
+
 #### Delete URL
 ```bash
 DELETE /api/urls/{shortCode}
