@@ -82,6 +82,41 @@ class UrlController
     }
   }
 
+  public function deleteUrl(string $shortCode): void
+  {
+    try {
+      $request = new Request();
+
+      if (!$request->isDelete()) {
+        JsonResponse::methodNotAllowed();
+        return;
+      }
+
+      if (!$this->authService->isAuthenticated()) {
+        JsonResponse::unauthorized('Authentication required', 'UNAUTHORIZED');
+        return;
+      }
+
+      $currentUser = $this->authService->getCurrentUser();
+      $deleted = $this->urlService->deleteUrl($shortCode, $currentUser->id);
+
+      if (!$deleted) {
+        JsonResponse::notFound('URL not found', 'URL_NOT_FOUND');
+        return;
+      }
+
+      JsonResponse::success(['message' => 'URL deleted successfully']);
+    } catch (ValidationException $e) {
+      if ($e->getErrorCode() === 'FORBIDDEN') {
+        JsonResponse::notFound('URL not found', 'URL_NOT_FOUND');
+      } else {
+        JsonResponse::badRequest($e->getMessage(), $e->getErrorCode());
+      }
+    } catch (Exception $e) {
+      $this->handleError($e);
+    }
+  }
+
   private function handleError(Exception $e): void
   {
     error_log("URL controller error: " . $e->getMessage());

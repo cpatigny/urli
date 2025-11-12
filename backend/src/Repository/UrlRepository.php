@@ -80,6 +80,13 @@ class UrlRepository extends BaseRepository
     return $stmt->execute([$shortCode]);
   }
 
+  public function deleteByShortCodeAndUserId(string $shortCode, int $userId): bool
+  {
+    $stmt = $this->db->prepare("DELETE FROM urls WHERE short_code = ? AND user_id = ?");
+    $success = $stmt->execute([$shortCode, $userId]);
+    return $success && $stmt->rowCount() > 0;
+  }
+
   private function hydrate(array $data): Url
   {
     return new Url(

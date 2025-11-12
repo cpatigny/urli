@@ -6,8 +6,10 @@ A modern URL shortener built with PHP backend and React frontend, featuring a cl
 
 - **URL Shortening**: Transform long URLs into short, memorable links
 - **Custom Short Codes**: Create personalized short codes (authenticated users only)
+- **URL Management**: Delete your own shortened URLs
 - **Click Analytics**: Track clicks and view statistics
 - **User Authentication**: Register, login, and logout functionality
+- **Account Management**: Update email, password, or delete account
 - **Session Management**: Secure session-based authentication
 - **Docker Support**: Easy local development setup
 
@@ -427,6 +429,45 @@ When custom code already exists:
   "error": {
     "code": "SHORT_CODE_EXISTS",
     "message": "Short code already exists"
+  }
+}
+```
+
+#### Delete URL
+```bash
+DELETE /api/urls/{shortCode}
+```
+
+**Response:**
+```json
+{
+  "message": "URL deleted successfully"
+}
+```
+
+**Notes:**
+- Requires authentication
+- Users can only delete their own URLs
+- Anonymous URLs (created without authentication) cannot be deleted
+
+**Error Responses:**
+
+Not authenticated:
+```json
+{
+  "error": {
+    "code": "UNAUTHORIZED",
+    "message": "Authentication required"
+  }
+}
+```
+
+URL not found or forbidden (same response for security):
+```json
+{
+  "error": {
+    "code": "URL_NOT_FOUND",
+    "message": "URL not found"
   }
 }
 ```

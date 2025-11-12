@@ -35,6 +35,7 @@ try {
     'message' => 'Urli API backend',
     'endpoints' => [
       'POST /api/shorten' => 'Shorten a URL',
+      'DELETE /api/urls/{shortCode}' => 'Delete a URL',
       'POST /api/auth/register' => 'Register a new user',
       'POST /api/auth/login' => 'Login',
       'POST /api/auth/logout' => 'Logout',
@@ -59,6 +60,12 @@ function handleApiRequest($container, string $method, string $path): void
   header('Content-Type: application/json');
 
   $apiPath = preg_replace('#^/api#', '', $path);
+
+  // Handle DELETE /api/urls/{shortCode}
+  if ($method === 'DELETE' && preg_match('#^/urls/([a-zA-Z0-9_-]+)$#', $apiPath, $matches)) {
+    $container->get(UrlController::class)->deleteUrl($matches[1]);
+    return;
+  }
 
   match ([$method, $apiPath]) {
     ['POST', '/shorten'] => $container->get(UrlController::class)->shorten(),

@@ -3,6 +3,7 @@
 namespace urli\Service;
 
 use Exception;
+use urli\Exception\ValidationException;
 use urli\Model\Url;
 use urli\Model\UrlResult;
 use urli\Repository\UrlRepository;
@@ -93,5 +94,23 @@ class UrlService
   public function incrementClicks(string $shortCode): bool
   {
     return $this->urlRepository->incrementClicks($shortCode);
+  }
+
+  public function deleteUrl(string $shortCode, int $userId): bool
+  {
+    // Find URL first
+    $url = $this->urlRepository->findByShortCode($shortCode);
+
+    if (!$url) {
+      throw new ValidationException('URL not found', 'URL_NOT_FOUND');
+    }
+
+    // Check ownership
+    if ($url->userId !== $userId) {
+      throw new ValidationException('You do not own this URL', 'FORBIDDEN');
+    }
+
+    // Delete URL
+    return $this->urlRepository->deleteByShortCodeAndUserId($shortCode, $userId);
   }
 }
