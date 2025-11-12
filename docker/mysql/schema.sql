@@ -50,6 +50,31 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `rate_limits`
+--
+
+CREATE TABLE `rate_limits` (
+  `id` int NOT NULL,
+  `ip_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_id` int DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `system_config`
+--
+
+CREATE TABLE `system_config` (
+  `config_key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `config_value` text COLLATE utf8mb4_unicode_ci,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 --
 -- Index pour les tables déchargées
 --
@@ -71,6 +96,21 @@ ALTER TABLE `users`
   ADD KEY `idx_email` (`email`);
 
 --
+-- Index pour la table `rate_limits`
+--
+ALTER TABLE `rate_limits`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_ip_created` (`ip_address`, `created_at`),
+  ADD KEY `idx_user_created` (`user_id`, `created_at`),
+  ADD KEY `idx_created` (`created_at`);
+
+--
+-- Index pour la table `system_config`
+--
+ALTER TABLE `system_config`
+  ADD PRIMARY KEY (`config_key`);
+
+--
 -- AUTO_INCREMENT pour les tables déchargées
 --
 
@@ -85,6 +125,12 @@ ALTER TABLE `urls`
 --
 ALTER TABLE `users`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT pour la table `rate_limits`
+--
+ALTER TABLE `rate_limits`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- Contraintes pour les tables déchargées

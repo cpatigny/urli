@@ -406,12 +406,35 @@ Content-Type: application/json
 ```
 
 **Notes:**
+- **Rate Limiting**:
+  - Anonymous users: 10 URLs per 24 hours (tracked by IP address)
+  - Authenticated users: 30 URLs per 24 hours (tracked by user ID)
 - Anonymous users: Always create a new short URL with random code
 - Authenticated users without custom code: Return existing short URL if they already shortened this URL, otherwise create new one
 - Authenticated users with custom code: Always create a new short URL (allows multiple custom codes for same URL)
 - Only authenticated users can provide a custom short code
 
 **Error Responses:**
+
+Rate limit exceeded (anonymous users):
+```json
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Rate limit exceeded. Anonymous users can create 10 URLs per day. Please register for 30 URLs per day."
+  }
+}
+```
+
+Rate limit exceeded (authenticated users):
+```json
+{
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Rate limit exceeded. You have reached your limit of 30 URLs per day."
+  }
+}
+```
 
 When custom code is provided without authentication:
 ```json

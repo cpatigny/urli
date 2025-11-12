@@ -7,6 +7,7 @@ use urli\Exception\ValidationException;
 use urli\Http\JsonResponse;
 use urli\Http\Request;
 use urli\Service\AuthService;
+use urli\Service\RateLimitService;
 use urli\Service\UrlService;
 use urli\Service\ValidationService;
 
@@ -15,7 +16,8 @@ class UrlController
   public function __construct(
     private UrlService $urlService,
     private ValidationService $validationService,
-    private AuthService $authService
+    private AuthService $authService,
+    private RateLimitService $rateLimitService
   ) {}
 
   public function shorten(): void
@@ -48,6 +50,43 @@ class UrlController
       if ($this->authService->isAuthenticated()) {
         $currentUser = $this->authService->getCurrentUser();
         $userId = $currentUser ? $currentUser->id : null;
+      }
+
+      // Time-based cleanup (every 24 hours)
+      if ($this->rateLimitService->shouldCleanup()) {
+        $this->rateLimitService->cleanupOldRecords();
+        $this->rateLimitService->markCleanupDone();
+      }
+
+      // Rate limiting
+      if ($userId === null) {
+        // Anonymous user rate limiting
+        $ipAddress = $this->rateLimitService->getClientIpAddress();
+
+        if (!$this->rateLimitService->checkRateLimitForAnonymous($ipAddress)) {
+          JsonResponse::error(
+            'Rate limit exceeded. Anonymous users can create 10 URLs per day. Please register for 30 URLs per day.',
+            'RATE_LIMIT_EXCEEDED',
+            429
+          );
+          return;
+        }
+
+        // Record the request
+        $this->rateLimitService->recordRequest($ipAddress, null);
+      } else {
+        // Authenticated user rate limiting
+        if (!$this->rateLimitService->checkRateLimitForUser($userId)) {
+          JsonResponse::error(
+            'Rate limit exceeded. You have reached your limit of 30 URLs per day.',
+            'RATE_LIMIT_EXCEEDED',
+            429
+          );
+          return;
+        }
+
+        // Record the request
+        $this->rateLimitService->recordRequest(null, $userId);
       }
 
       $result = $this->urlService->shortenUrl($originalUrl, $customCode, $userId);

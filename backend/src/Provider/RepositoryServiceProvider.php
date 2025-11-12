@@ -3,6 +3,7 @@
 namespace urli\Provider;
 
 use urli\Container\Container;
+use urli\Repository\RateLimitRepository;
 use urli\Repository\UrlRepository;
 use urli\Repository\UserRepository;
 
@@ -16,6 +17,10 @@ class RepositoryServiceProvider extends ServiceProvider
 
     $container->set(UserRepository::class, function ($c) {
       return new UserRepository($c->get('db'));
+    });
+
+    $container->set(RateLimitRepository::class, function ($c) {
+      return new RateLimitRepository($c->get('db'));
     });
   }
 }

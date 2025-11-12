@@ -8,6 +8,7 @@ use urli\Controller\UrlController;
 use urli\Provider\ServiceProvider;
 use urli\Repository\UrlRepository;
 use urli\Service\AuthService;
+use urli\Service\RateLimitService;
 use urli\Service\UrlService;
 use urli\Service\ValidationService;
 
@@ -19,7 +20,8 @@ class ControllerServiceProvider extends ServiceProvider
       return new UrlController(
         $c->get(UrlService::class),
         $c->get(ValidationService::class),
-        $c->get(AuthService::class)
+        $c->get(AuthService::class),
+        $c->get(RateLimitService::class)
       );
     });
 
