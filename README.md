@@ -137,7 +137,19 @@ Content-Type: application/json
 }
 ```
 
-**Error Response:**
+**Error Responses:**
+
+Already authenticated:
+```json
+{
+  "error": {
+    "code": "ALREADY_AUTHENTICATED",
+    "message": "Already logged in"
+  }
+}
+```
+
+Invalid credentials:
 ```json
 {
   "error": {
@@ -148,6 +160,7 @@ Content-Type: application/json
 ```
 
 **Error Codes:**
+- `ALREADY_AUTHENTICATED` - User is already logged in
 - `MISSING_FIELDS` - Email or password not provided
 - `INVALID_CREDENTIALS` - Email or password is incorrect
 

@@ -58,6 +58,12 @@ class AuthController
         return;
       }
 
+      // Check if user is already logged in
+      if ($this->authService->isAuthenticated()) {
+        JsonResponse::badRequest('Already logged in', 'ALREADY_AUTHENTICATED');
+        return;
+      }
+
       $data = $request->bodyData();
 
       // Validate required fields
