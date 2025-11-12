@@ -404,8 +404,9 @@ Content-Type: application/json
 ```
 
 **Notes:**
-- Anonymous users can shorten URLs but will receive a random short code (URLs are not associated with any user)
-- Authenticated users can shorten URLs with or without custom codes (all their URLs are tracked with their user_id)
+- Anonymous users: Always create a new short URL with random code
+- Authenticated users without custom code: Return existing short URL if they already shortened this URL, otherwise create new one
+- Authenticated users with custom code: Always create a new short URL (allows multiple custom codes for same URL)
 - Only authenticated users can provide a custom short code
 
 **Error Responses:**

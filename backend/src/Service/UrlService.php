@@ -13,9 +13,9 @@ class UrlService
 
   public function shortenUrl(string $originalUrl, ?string $customCode = null, ?int $userId = null): UrlResult
   {
-    // If no custom code provided, check if URL was already shortened
-    if ($customCode === null) {
-      $existingUrl = $this->urlRepository->findByOriginalUrl($originalUrl);
+    // If logged-in user without custom code, check if they already shortened this URL
+    if ($userId !== null && $customCode === null) {
+      $existingUrl = $this->urlRepository->findByOriginalUrlAndUserId($originalUrl, $userId);
       if ($existingUrl) {
         return new UrlResult($existingUrl, true);
       }

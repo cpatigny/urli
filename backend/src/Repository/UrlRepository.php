@@ -53,6 +53,15 @@ class UrlRepository extends BaseRepository
     return $data ? $this->hydrate($data) : null;
   }
 
+  public function findByOriginalUrlAndUserId(string $originalUrl, int $userId): ?Url
+  {
+    $stmt = $this->db->prepare("SELECT * FROM urls WHERE original_url = ? AND user_id = ?");
+    $stmt->execute([$originalUrl, $userId]);
+
+    $data = $stmt->fetch();
+    return $data ? $this->hydrate($data) : null;
+  }
+
   public function findById(int $id): ?Url
   {
     $stmt = $this->db->prepare("SELECT * FROM urls WHERE id = ?");
