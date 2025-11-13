@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Only rewrite if the request is NOT an actual file or directory
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Forward all other requests to src/public, preserving path and query strings
+    RewriteRule ^(.*)$ src/public/$1 [QSA,L]
+
+    # Set the default file to src/public/index.php
+    DirectoryIndex src/public/index.php
+</IfModule>

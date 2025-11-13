@@ -565,6 +565,38 @@ DB_USER=urli_user
 DB_PASS=urli_password
 ```
 
+### Production Deployment
+
+#### Document Root Configuration
+
+**If you can set the document root** (recommended):
+- Point your web server's document root to `backend/src/public/`
+- No additional configuration needed
+
+**If you cannot set the document root** (e.g., Hostinger, shared hosting):
+1. Rename `backend/.htaccess.dev` to `backend/.htaccess`
+2. Upload to your server
+3. This `.htaccess` will redirect all requests to `src/public/`
+
+The `.htaccess.dev` file is kept separate for local development where Docker already sets the correct document root.
+
+```apache
+# backend/.htaccess (for production without document root control)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Only rewrite if the request is NOT an actual file or directory
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Forward all other requests to src/public, preserving path and query strings
+    RewriteRule ^(.*)$ src/public/$1 [QSA,L]
+
+    # Set the default file to src/public/index.php
+    DirectoryIndex src/public/index.php
+</IfModule>
+```
+
 ### Database Setup
 
 #### Manual Setup
